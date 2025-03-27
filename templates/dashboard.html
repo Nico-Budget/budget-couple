@@ -1,0 +1,91 @@
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Tableau de bord</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <script>
+        function updateCategories() {
+            const type = document.querySelector("select[name='type']").value;
+            const catSelect = document.querySelector("select[name='categorie']");
+            const revenuCategories = [
+                "Revenu Mensuel Nico",
+                "Revenu Mensuel Roxana",
+                "Remboursement Impôt",
+                "Primes de fin d’année + Vacances",
+                "Autres types de remboursement"
+            ];
+            const depenseCategories = [
+                "Crédit Maison",
+                "Assurance crédit + maison",
+                "Impôt annuel maison",
+                "Internet + GSM + Netflix",
+                "Chauffage + Électricité + Eau",
+                "Entretien maison",
+                "Essence + Taxe + Entretien voiture",
+                "Supermarché",
+                "Don Ali",
+                "Manger en ville / UberEats",
+                "Abonnement sport",
+                "Santé & frais médicaux",
+                "Divertissement",
+                "Shopping",
+                "Cadeaux",
+                "Transport public",
+                "Pension privée",
+                "Donation + Syndicat",
+                "Épargne commune",
+                "Frais Nicaragua",
+                "Frais exceptionnels Roxana",
+                "Frais exceptionnels Nico"
+            ];
+            catSelect.innerHTML = '<option value="">-- Catégorie --</option>';
+            const categories = type === 'revenu' ? revenuCategories : depenseCategories;
+            categories.forEach(cat => {
+                const option = document.createElement('option');
+                option.value = cat;
+                option.textContent = cat;
+                catSelect.appendChild(option);
+            });
+        }
+    </script>
+</head>
+<body onload="updateCategories()">
+    <div class="container">
+        <h2>Tableau de bord</h2>
+        <p>Solde actuel : <strong>{{ solde }} €</strong></p>
+        <form method="POST">
+            <select name="type" required onchange="updateCategories()">
+                <option value="revenu">Revenu</option>
+                <option value="depense">Dépense</option>
+            </select>
+            <input type="number" step="0.01" name="montant" placeholder="Montant" required>
+            <input type="text" name="description" placeholder="Description">
+            <select name="categorie" required></select>
+            <select name="personne" required>
+                <option value="">-- Qui ? --</option>
+                <option value="Nico">Nico</option>
+                <option value="Roxana">Roxana</option>
+                <option value="Commun">Commun</option>
+            </select>
+            <select name="nature" required>
+                <option value="">-- Type --</option>
+                <option value="Personnelle">Personnelle</option>
+                <option value="Commune">Commune</option>
+            </select>
+            <button type="submit">Ajouter</button>
+        </form>
+        <a href="/rapport">📊 Voir le rapport</a>
+        <h3>Historique</h3>
+        <ul>
+            {% for m in mouvements %}
+                <li>
+                    <strong>{{ m[1] }}</strong> : {{ m[2] }} € - {{ m[3] }} ({{ m[4] }} / {{ m[5] }} / {{ m[6] }}) <em>{{ m[7] }}</em>
+                </li>
+            {% endfor %}
+        </ul>
+        <a href="/logout">Se déconnecter</a>
+    </div>
+</body>
+</html>

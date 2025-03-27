@@ -1,0 +1,64 @@
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Rapports</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+<div class="container">
+    <h2>Rapport</h2>
+
+    <form method="GET">
+        <label for="mois">Filtrer par mois :</label>
+        <select name="mois" multiple size="4">
+            {% for m in mois_disponibles %}
+                <option value="{{ m }}" {% if m in mois_selectionnes %}selected{% endif %}>{{ m }}</option>
+            {% endfor %}
+        </select>
+        <button type="submit">Filtrer</button>
+    </form>
+
+    <p><strong>Solde :</strong> {{ solde }} €</p>
+
+    <h3>Totaux par personne</h3>
+    <ul>
+        {% for personne, total in totaux_personne.items() %}
+            <li>{{ personne }} : {{ total }} €</li>
+        {% endfor %}
+    </ul>
+
+    <h3>Totaux par catégorie</h3>
+    <ul>
+        {% for cat, total in totaux_categorie.items() %}
+            <li>{{ cat }} : {{ total }} €</li>
+        {% endfor %}
+    </ul>
+
+    <h3>Graphique des dépenses par catégorie</h3>
+    <canvas id="graphCat" width="300" height="300"></canvas>
+    <script>
+        const data = {
+            labels: {{ labels | safe }},
+            datasets: [{
+                label: 'Répartition par catégorie',
+                data: {{ data | safe }},
+                backgroundColor: [
+                    '#FF6384', '#36A2EB', '#FFCE56', '#7ED6DF', '#E77F67',
+                    '#A29BFE', '#55EFC4', '#FAB1A0', '#D63031', '#00B894',
+                    '#6C5CE7', '#FD79A8', '#FFEAA7', '#FDCB6E'
+                ],
+            }]
+        };
+        new Chart(document.getElementById('graphCat'), {
+            type: 'pie',
+            data: data,
+        });
+    </script>
+
+    <a href="/dashboard">← Retour</a>
+</div>
+</body>
+</html>
